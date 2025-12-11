@@ -17,7 +17,8 @@ public class PemesananCafe10 {
         System.out.println("===== MENU UTAMA =====");
         System.out.println("1. Tambahkan Pesanan");
         System.out.println("2. Tampilkan Daftar Pesanan");
-        System.out.println("3. Keluar");
+        System.out.println("3. Laporan");
+        System.out.println("4. Keluar");
     }
 
     static void tampilMenuKafe() {
@@ -26,6 +27,15 @@ public class PemesananCafe10 {
         System.out.println("2. Latte      - Rp 22.000");
         System.out.println("3. Teh Tarik  - Rp 12.000");
         System.out.println("4. Mie Goreng - Rp 18.000");
+    }
+
+    static boolean cekNomorMeja(int nomorMeja) {
+        for (int i = 0; i < jumlahPesanan; i++) {
+            if (nomorMejaData[i] == nomorMeja) {
+                return true; // Nomor meja sudah ada
+            }
+        }
+        return false; // Nomor meja belum ada
     }
 
     static void tampilDaftarPesanan() {
@@ -48,10 +58,40 @@ public class PemesananCafe10 {
             System.out.println("-------------------------");
         }
     }
+
+    static void tampilLaporan() {
+        if (jumlahPesanan == 0) {
+            System.out.println("\n===== LAPORAN =====");
+            System.out.println("Belum ada pesanan.");
+            System.out.println();
+            return;
+        }
+        int totalPendapatan = 0;
+        int[] totalPenjualan = new int[4];
+        for (int i = 0; i < jumlahPesanan; i++) {
+            totalPendapatan += totalHargaData[i];
+            for (int j = 0; j < 4; j++) {
+                totalPenjualan[j] += jumlahPerItemData[i][j];
+            }
+        }
+        System.out.println("\n===== LAPORAN =====");
+        System.out.println("Total Pendapatan: Rp " + totalPendapatan);
+        System.out.println("\nPenjualan Setiap Menu:");
+        for (int i = 0; i < 4; i++) {
+            System.out.println(daftarMenu[i] + ": " + totalPenjualan[i] + " porsi");
+        }
+        int maxIndex = 0;
+        for (int i = 1; i < 4; i++) {
+            if (totalPenjualan[i] > totalPenjualan[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        System.out.println("\nMenu Paling Laris: " + daftarMenu[maxIndex] + " (" + totalPenjualan[maxIndex] + " porsi)");
+    }
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int pilihan = 0;
-        while (pilihan != 3) {
+        while (pilihan != 4) {
             tampilMenuUtama();
             System.out.print("Pilih menu: ");
             pilihan = sc.nextInt();
@@ -60,6 +100,11 @@ public class PemesananCafe10 {
                 String namaPelanggan = sc.next();
                 System.out.print("Masukkan nomor meja: ");
                 int nomorMeja = sc.nextInt();
+                if (cekNomorMeja(nomorMeja)) {
+                    System.out.println("Nomor meja sudah ada. Gunakan nomor meja yang lain.");
+                    System.out.println();
+                    continue;
+                }
                 tampilMenuKafe();
                 int totalHarga = 0;
                 int[] jumlahPerItem = new int[4];
@@ -93,6 +138,7 @@ public class PemesananCafe10 {
                         totalHarga += daftarHarga[3] * jumlahItem;
                         continue;
                     } else {
+                        System.out.println();
                         System.out.println("Pilihan tidak valid.");
                     }
                 }
@@ -101,14 +147,20 @@ public class PemesananCafe10 {
                 jumlahPerItemData[jumlahPesanan] = jumlahPerItem;
                 totalHargaData[jumlahPesanan] = totalHarga;
                 jumlahPesanan++;
+                System.out.println();
                 System.out.println("Pesanan berhasil ditambahkan.");
                 System.out.println("Total harga pesanan: Rp " + totalHarga);
+                System.out.println();
             } else if (pilihan == 2) {
                 tampilDaftarPesanan();
             } else if (pilihan == 3) {
+                tampilLaporan();
+            } else if (pilihan == 4) {
                 System.out.println("Terima kasih telah menggunakan aplikasi pemesanan kafe.");
             } else {
+                System.out.println();
                 System.out.println("Pilihan tidak valid.");
+                System.out.println();
             }
         }
         sc.close();
